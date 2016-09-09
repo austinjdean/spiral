@@ -17,8 +17,6 @@ bottomEdge_g	= 0
 
 def drawCanvas():
 	global canvas_g, leftEdge_g, topEdge_g, rightEdge_g, bottomEdge_g
-	speed(0)
-	hideturtle()
 
 	penup()
 	goto(-frameWidth_g / 2, -frameHeight_g / 2)
@@ -179,7 +177,11 @@ def combinePoints(interiorPoints, exteriorPoints):
 
 	return rows
 
+def drawFunkyGrid():
+	pass
+
 def main():
+	speed(0)
 	drawCanvas()
 
 	# For all positive integers NUM and DEN <= 10, where NUM > DEN, the combination 
@@ -200,7 +202,8 @@ def main():
 
 	allPoints = combinePoints(sortedSkewedInteriorPoints, sortedExteriorPoints)
 
-	speed(10)
+	# hideturtle()
+	speed(6)
 	setheading(90)
 
 	for row in allPoints:
