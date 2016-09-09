@@ -18,7 +18,7 @@ bottomEdge_g	= 0
 def drawCanvas():
 	global canvas_g, leftEdge_g, topEdge_g, rightEdge_g, bottomEdge_g
 	speed(0)
-	hideturtle()
+	# hideturtle()
 
 	penup()
 	goto(-frameWidth_g / 2, -frameHeight_g / 2)
@@ -130,6 +130,37 @@ def skewPoints(points):
 		skewedPoints.append(skewedPoint)
 	return skewedPoints
 
+def getKey(item):
+	return item[1]
+
+def sortInteriorPoints(points):
+	rows = []
+
+	sortedPoints = sorted(points, key = getKey, reverse = True)
+
+	i = 0
+	currentRow = []
+
+	for point in sortedPoints:
+		currentRow.append(point)
+
+		if i % (hDivs_g - 1) == (hDivs_g - 2): # bane of my existence
+			rows.append(currentRow)
+			currentRow = []
+
+		i += 1
+
+	for row in rows:
+		row.sort()
+
+	return rows
+
+def sortExteriorPoints(points):
+	points.sort()
+	for point in points:
+		goto(point)
+		dot()
+
 def main():
 	drawCanvas()
 
@@ -149,21 +180,20 @@ def main():
 
 	exteriorPoints = populateExteriorPoints()
 
-	allPoints = skewedInteriorPoints + exteriorPoints
+	allPoints = exteriorPoints + skewedInteriorPoints
 
-	# for point in allPoints:
-	# 	goto(point)
-	# 	dot()
-		# print point
+	speed(3)
+	setheading(90)
 
-	allPoints.sort()
+	sortedSkewedInteriorPoints = sortInteriorPoints(skewedInteriorPoints)
 
-	speed(2)
+	sortExteriorPoints(exteriorPoints)
 
-	for point in allPoints:
-		goto(point)
-		dot()
-		print point
+	# for row in sortedSkewedInteriorPoints:
+	# 	for point in row:
+	# 		goto(point)
+	# 		dot()
+	# 		print point
 
 	exitonclick()
 
