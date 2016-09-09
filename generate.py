@@ -175,7 +175,18 @@ def sortExteriorPoints(points):
 
 def combinePoints(interiorPoints, exteriorPoints):
 	rows = []
+	i = 0
 
+	for row in exteriorPoints:
+		if len(row) == 2:
+			row[1:1] = interiorPoints[i] # thanks: http://stackoverflow.com/a/23181066/2929868
+			# print interiorPoints[i]
+			# print '=========='
+			# print row
+			i += 1
+		rows.append(row)
+
+	return rows
 
 def main():
 	drawCanvas()
@@ -196,15 +207,22 @@ def main():
 
 	sortedExteriorPoints = sortExteriorPoints(exteriorPoints) # what the fuck this was just fucking working
 
+	allPoints = combinePoints(sortedSkewedInteriorPoints, sortedExteriorPoints)
+
 	speed(10)
 	setheading(90)
 
-	for row in sortedSkewedInteriorPoints:
-		for point in row:
-			goto(point)
-			dot()
+	# for row in sortedSkewedInteriorPoints:
+	# 	for point in row:
+	# 		goto(point)
+	# 		dot()
 
-	for row in sortedExteriorPoints:
+	# for row in sortedExteriorPoints:
+	# 	for point in row:
+	# 		goto(point)
+	# 		dot()
+
+	for row in allPoints:
 		for point in row:
 			goto(point)
 			dot()
