@@ -18,7 +18,7 @@ bottomEdge_g	= 0
 def drawCanvas():
 	global canvas_g, leftEdge_g, topEdge_g, rightEdge_g, bottomEdge_g
 	speed(0)
-	# hideturtle()
+	hideturtle()
 
 	penup()
 	goto(-frameWidth_g / 2, -frameHeight_g / 2)
@@ -71,7 +71,6 @@ def populateInteriorPoints():
 	# vertical first
 	for i in range(0, vDivs_g - 1): # minus one to discard first and last
 		forward(divHeight_g)
-		# dot()
 		heightMarkers.append(ycor())
 
 	# horizontal next
@@ -80,7 +79,6 @@ def populateInteriorPoints():
 
 	for i in range(0, hDivs_g - 1): # minus one to discard first and last
 		forward(divWidth_g)
-		# dot()
 		widthMarkers.append(xcor())
 
 	# thanks: http://stackoverflow.com/a/19334433/2929868
@@ -93,25 +91,21 @@ def populateExteriorPoints():
 	setheading(0)
 	# bottom edge
 	for i in range(0, hDivs_g):
-		# dot()
 		coordinates.append(position())
 		forward(divWidth_g)
 	left(90)
 	# right edge
 	for i in range(0, vDivs_g):
-		# dot()
 		coordinates.append(position())
 		forward(divHeight_g)
 	left(90)
 	# top edge
 	for i in range(0, hDivs_g):
-		# dot()
 		coordinates.append(position())
 		forward(divWidth_g)
 	left(90)
 	# left edge
 	for i in range(0, vDivs_g):
-		# dot()
 		coordinates.append(position())
 		forward(divHeight_g)
 
@@ -180,9 +174,6 @@ def combinePoints(interiorPoints, exteriorPoints):
 	for row in exteriorPoints:
 		if len(row) == 2:
 			row[1:1] = interiorPoints[i] # thanks: http://stackoverflow.com/a/23181066/2929868
-			# print interiorPoints[i]
-			# print '=========='
-			# print row
 			i += 1
 		rows.append(row)
 
@@ -212,18 +203,9 @@ def main():
 	speed(10)
 	setheading(90)
 
-	# for row in sortedSkewedInteriorPoints:
-	# 	for point in row:
-	# 		goto(point)
-	# 		dot()
-
-	# for row in sortedExteriorPoints:
-	# 	for point in row:
-	# 		goto(point)
-	# 		dot()
-
 	for row in allPoints:
 		for point in row:
+			print point
 			goto(point)
 			dot()
 
