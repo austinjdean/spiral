@@ -156,10 +156,26 @@ def sortInteriorPoints(points):
 	return rows
 
 def sortExteriorPoints(points):
-	points.sort()
-	for point in points:
-		goto(point)
-		dot()
+	rows = []
+
+	sortedPoints = sorted(points, key = getKey, reverse = True)
+
+	i = 0
+	currentRow = []
+
+	for point in sortedPoints:
+		currentRow.append(point)
+
+		# if we're at the right most edge, append the current row and clear it
+		if (point[0] >= rightEdge_g - 1) and (point[0] <= rightEdge_g + 1): # account for decimal rounding errors ffs
+			rows.append(currentRow)
+			currentRow = []
+
+	return rows
+
+def combinePoints(interiorPoints, exteriorPoints):
+	rows = []
+
 
 def main():
 	drawCanvas()
@@ -174,26 +190,24 @@ def main():
 	interiorPoints = populateInteriorPoints()
 	skewedInteriorPoints = skewPoints(interiorPoints)
 
-	# for point in skewedInteriorPoints:
-		# goto(point)
-		# dot()
-
 	exteriorPoints = populateExteriorPoints()
-
-	allPoints = exteriorPoints + skewedInteriorPoints
-
-	speed(3)
-	setheading(90)
 
 	sortedSkewedInteriorPoints = sortInteriorPoints(skewedInteriorPoints)
 
-	sortExteriorPoints(exteriorPoints)
+	sortedExteriorPoints = sortExteriorPoints(exteriorPoints) # what the fuck this was just fucking working
 
-	# for row in sortedSkewedInteriorPoints:
-	# 	for point in row:
-	# 		goto(point)
-	# 		dot()
-	# 		print point
+	speed(10)
+	setheading(90)
+
+	for row in sortedSkewedInteriorPoints:
+		for point in row:
+			goto(point)
+			dot()
+
+	for row in sortedExteriorPoints:
+		for point in row:
+			goto(point)
+			dot()
 
 	exitonclick()
 
