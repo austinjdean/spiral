@@ -14,6 +14,7 @@ leftEdge_g		= 0
 topEdge_g		= 0
 rightEdge_g		= 0
 bottomEdge_g	= 0
+allPoints_g		= []
 
 def drawCanvas():
 	global canvas_g, leftEdge_g, topEdge_g, rightEdge_g, bottomEdge_g
@@ -111,8 +112,8 @@ def populateExteriorPoints():
 
 def skewPoints(points):
 	skewedPoints = []
-	lowerSkewBound = -30 # make these changeable later
-	upperSkewBound = 30
+	lowerSkewBound = -50 # make these changeable later
+	upperSkewBound = 50
 	for point in points:
 		skewedPoint = ()
 		for component in point:
@@ -178,9 +179,27 @@ def combinePoints(interiorPoints, exteriorPoints):
 	return rows
 
 def drawFunkyGrid():
-	pass
+	# horizontals
+	for row in allPoints_g[1:-1]:
+		penup()
+		for point in row:
+			goto(point)
+			pendown()
+
+	penup()
+
+	# verticals
+	columnIndex = 1 # start at second point
+	for topOfColumn in allPoints_g[0][1:-1]: # top row of points
+		penup()
+		goto(topOfColumn)
+		for rowIndex in range(0, vDivs_g + 1):
+			goto(allPoints_g[rowIndex][columnIndex])
+			pendown()
+		columnIndex += 1
 
 def main():
+	global allPoints_g
 	speed(0)
 	drawCanvas()
 
@@ -200,17 +219,19 @@ def main():
 
 	sortedExteriorPoints = sortExteriorPoints(exteriorPoints) # what the fuck this was just fucking working
 
-	allPoints = combinePoints(sortedSkewedInteriorPoints, sortedExteriorPoints)
+	allPoints_g = combinePoints(sortedSkewedInteriorPoints, sortedExteriorPoints)
 
 	# hideturtle()
-	speed(6)
+	speed(10)
 	setheading(90)
 
-	for row in allPoints:
-		for point in row:
-			print point
-			goto(point)
-			dot()
+	drawFunkyGrid()
+
+	# for row in allPoints_g:
+	# 	for point in row:
+	# 		print point
+	# 		goto(point)
+	# 		dot()
 
 	exitonclick()
 
