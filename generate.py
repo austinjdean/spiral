@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from turtle import *
-import random
+import random, time
 
 frameHeight_g	= 750
 frameWidth_g	=  ((1 + sqrt(5)) / 2) * frameHeight_g # golden ratio
@@ -16,7 +16,8 @@ rightEdge_g		= 0
 bottomEdge_g	= 0
 allPoints_g		= []
 polygons_g		= [] # order of points is bottom left first, going counterclockwise
-skewMargin_g	= 70
+skewMargin_g	= 60
+deviance_g		= 10
 
 def drawCanvas():
 	global canvas_g, leftEdge_g, topEdge_g, rightEdge_g, bottomEdge_g
@@ -225,9 +226,57 @@ def registerPolygons():
 	# 		pendown()
 	# 	goto(poly[0])
 
-def spiral(polygon, direction, deviance):
+def centroid(polygon):
+	xCoords = []
+	yCoords = []
+
+	for point in polygon:
+		xCoords.append(point[0])
+		yCoords.append(point[1])
+
+	avgX = sum(xCoords) / float(len(xCoords))
+	avgY = sum(yCoords) / float(len(yCoords))
+
+	return (avgX, avgY)
+
+# Where a = line point 1; b = line point 2; c = point to check against
+def isLeft(line, point):
+	a = line[0]
+	b = line[1]
+	# thanks: http://stackoverflow.com/a/3461533/2929868
+	return ((b[0] - a[0])*(point[1] - a[1]) - (b[1] - a[1])*(point[0] - a[0])) <= 0;
+
+def outside(polygon, point):
+	# print 'outside called'
+	bottomLine	= (polygon[0], polygon[1])
+	rightLine	= (polygon[1], polygon[2])
+	topLine		= (polygon[2], polygon[3])
+	leftLine	= (polygon[3], polygon[0])
+
+	# if isLeft(bottomLine, point) and isLeft(rightLine, point) and not isLeft(topLine, point) and not isLeft(leftLine):
+	# 	return False
+	# return True
+
+	# print 'isLeft(bottomLine, point)', isLeft(bottomLine, point)
+	# print 'isLeft(rightLine, point)', isLeft(rightLine, point)
+	# print 'isLeft(topLine, point)', isLeft(topLine, point)
+	# print 'isLeft(leftLine)', isLeft(leftLine, point)
+	# time.sleep(1)
+
+# thanks: http://stackoverflow.com/a/24468019/2929868
+def polygonArea(polygon):
+    n = len(polygon) # of corners
+    area = 0.0
+    for i in range(n):
+        j = (i + 1) % n
+        area += polygon[i][0] * polygon[j][1]
+        area -= polygon[j][0] * polygon[i][1]
+    area = abs(area) / 2.0
+    return area
+
+def spiral(polygon, startingIndex, direction, deviance, area):
+
 	penup()
-	startingIndex = random.randint(0,3)
 	startingCorner = polygon[startingIndex]
 	goto(startingCorner)
 
@@ -241,6 +290,10 @@ def spiral(polygon, direction, deviance):
 
 			# offset from deviance
 			forward(deviance) # this will replace the starting corner
+			# thanks: http://stackoverflow.com/a/11458274/2929868
+			lst = list(polygon)
+			lst[startingIndex] = pos()
+			polygon = tuple(lst)
 
 			# draw line
 			pendown()
@@ -254,6 +307,10 @@ def spiral(polygon, direction, deviance):
 
 			# offset from deviance
 			forward(deviance) # this will replace the starting corner
+			# thanks: http://stackoverflow.com/a/11458274/2929868
+			lst = list(polygon)
+			lst[startingIndex] = pos()
+			polygon = tuple(lst)
 
 			# draw line
 			pendown()
@@ -270,6 +327,10 @@ def spiral(polygon, direction, deviance):
 
 			# offset from deviance
 			forward(deviance) # this will replace the starting corner
+			# thanks: http://stackoverflow.com/a/11458274/2929868
+			lst = list(polygon)
+			lst[startingIndex] = pos()
+			polygon = tuple(lst)
 
 			# draw line
 			pendown()
@@ -283,6 +344,10 @@ def spiral(polygon, direction, deviance):
 
 			# offset from deviance
 			forward(deviance) # this will replace the starting corner
+			# thanks: http://stackoverflow.com/a/11458274/2929868
+			lst = list(polygon)
+			lst[startingIndex] = pos()
+			polygon = tuple(lst)
 
 			# draw line
 			pendown()
@@ -299,6 +364,10 @@ def spiral(polygon, direction, deviance):
 
 			# offset from deviance
 			forward(deviance) # this will replace the starting corner
+			# thanks: http://stackoverflow.com/a/11458274/2929868
+			lst = list(polygon)
+			lst[startingIndex] = pos()
+			polygon = tuple(lst)
 
 			# draw line
 			pendown()
@@ -312,6 +381,10 @@ def spiral(polygon, direction, deviance):
 
 			# offset from deviance
 			forward(deviance) # this will replace the starting corner
+			# thanks: http://stackoverflow.com/a/11458274/2929868
+			lst = list(polygon)
+			lst[startingIndex] = pos()
+			polygon = tuple(lst)
 
 			# draw line
 			pendown()
@@ -328,6 +401,10 @@ def spiral(polygon, direction, deviance):
 
 			# offset from deviance
 			forward(deviance) # this will replace the starting corner
+			# thanks: http://stackoverflow.com/a/11458274/2929868
+			lst = list(polygon)
+			lst[startingIndex] = pos()
+			polygon = tuple(lst)
 
 			# draw line
 			pendown()
@@ -341,11 +418,27 @@ def spiral(polygon, direction, deviance):
 
 			# offset from deviance
 			forward(deviance) # this will replace the starting corner
+			# thanks: http://stackoverflow.com/a/11458274/2929868
+			lst = list(polygon)
+			lst[startingIndex] = pos()
+			polygon = tuple(lst)
 
 			# draw line
 			pendown()
 			goto(polygon[2])
 			penup()
+
+	if startingIndex == 3:
+		startingIndex = 0
+	else:
+		startingIndex += 1
+
+	postDrawArea = polygonArea(polygon)
+
+	if postDrawArea >= area:
+		return
+
+	spiral(polygon, startingIndex, direction, deviance, postDrawArea)
 
 	# polygon is which shape to spiral
 	# startingCorner is which corner to start in
@@ -387,8 +480,8 @@ def main():
 
 	allPoints_g = combinePoints(sortedSkewedInteriorPoints, sortedExteriorPoints)
 
-	# hideturtle()
-	speed(10)
+	hideturtle()
+	speed(0)
 	setheading(90)
 
 	drawFunkyGrid()
@@ -396,7 +489,14 @@ def main():
 	registerPolygons()
 
 	for poly in polygons_g:
-		spiral(poly, 'clock', 15)
+		# goto(centroid(poly))
+		# dot()
+		startingIndex = random.randint(0,3)
+		if startingIndex % 2 == 0:
+			direction = 'clock'
+		else:
+			direction = 'counter'
+		spiral(poly, startingIndex, direction, deviance_g, polygonArea(poly))
 
 	exitonclick()
 
@@ -405,3 +505,5 @@ if __name__ == '__main__':
 
 # setheading(towards(0, 0))
 # goto(0, 0)
+
+# for each polygon
