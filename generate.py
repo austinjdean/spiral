@@ -15,6 +15,8 @@ topEdge_g		= 0
 rightEdge_g		= 0
 bottomEdge_g	= 0
 allPoints_g		= []
+polygons_g		= [] # order of points is bottom left first, going counterclockwise
+skewMargin_g	= 70
 
 def drawCanvas():
 	global canvas_g, leftEdge_g, topEdge_g, rightEdge_g, bottomEdge_g
@@ -39,25 +41,6 @@ def drawCanvas():
 	topEdge_g		= -canvas_g[0][1]
 	rightEdge_g		= -canvas_g[0][0]
 	bottomEdge_g	=  canvas_g[0][1]
-
-def spiral(polygon, startingCorner, direction, deviance):
-	pass
-	# polygon is which shape to spiral
-	# startingCorner is which corner to start in
-	# direction is clockwise or counterclockwise
-	# deviance is how many pixels away from the current edge the end of the line will be
-	# 	deviance could also be done as:
-	# 	- a percentage of the opposing side
-	# 	- a percentage of the angle
-	# 	- a raw angle (e.g. 5 degrees)
-	# 	should we have options for all of these?
-
-	# function outline:
-	# pen up
-	# jump to starting corner
-	# 
-	# definitely gonna be using towards(x, y)
-	# so how to get x, y?
 
 def populateInteriorPoints():
 	heightMarkers = []
@@ -112,8 +95,13 @@ def populateExteriorPoints():
 
 def skewPoints(points):
 	skewedPoints = []
-	lowerSkewBound = -50 # make these changeable later
-	upperSkewBound = 50
+
+	# lowerSkewBound = -divHeight_g / 2.5
+	# upperSkewBound = divHeight_g / 2.5
+
+	lowerSkewBound = -skewMargin_g
+	upperSkewBound = skewMargin_g
+
 	for point in points:
 		skewedPoint = ()
 		for component in point:
@@ -198,6 +186,184 @@ def drawFunkyGrid():
 			pendown()
 		columnIndex += 1
 
+	penup()
+
+def registerPolygons():
+	global polygons_g
+	ul = [] # upper left coordinates
+	ur = [] # upper right coordinates
+	bl = [] # bottom left coordinates
+	br = [] # bottom right coordinates
+
+	for row in allPoints_g[:-1]:
+		for point in row[:-1]:
+			ul.append(point)
+
+	for row in allPoints_g[:-1]:
+		for point in row[1:]:
+			ur.append(point)
+
+	for row in allPoints_g[1:]:
+		for point in row[:-1]:
+			bl.append(point)
+
+	for row in allPoints_g[1:]:
+		for point in row[1:]:
+			br.append(point)
+
+	for i in range(0, len(ul)): # all four should be same size
+		poly = (bl[i], br[i], ur[i], ul[i])
+		polygons_g.append(poly)
+
+	# clear()
+
+	# for poly in polygons_g:
+	# 	penup()
+	# 	for point in poly:
+	# 		goto(point)
+	# 		# dot()
+	# 		pendown()
+	# 	goto(poly[0])
+
+def spiral(polygon, direction, deviance):
+	penup()
+	startingIndex = random.randint(0,3)
+	startingCorner = polygon[startingIndex]
+	goto(startingCorner)
+
+	# bottom left
+	if startingIndex == 0:
+
+		if direction == 'clock':
+
+			# turn to face 3
+			setheading(towards(polygon[3]))
+
+			# offset from deviance
+			forward(deviance) # this will replace the starting corner
+
+			# draw line
+			pendown()
+			goto(polygon[1])
+			penup()
+
+		else:
+
+			# turn to face 1
+			setheading(towards(polygon[1]))
+
+			# offset from deviance
+			forward(deviance) # this will replace the starting corner
+
+			# draw line
+			pendown()
+			goto(polygon[3])
+			penup()
+
+	# bottom right
+	elif startingIndex == 1:
+
+		if direction == 'clock':
+
+			# turn to face 0
+			setheading(towards(polygon[0]))
+
+			# offset from deviance
+			forward(deviance) # this will replace the starting corner
+
+			# draw line
+			pendown()
+			goto(polygon[2])
+			penup()
+
+		else:
+
+			# turn to face 2
+			setheading(towards(polygon[2]))
+
+			# offset from deviance
+			forward(deviance) # this will replace the starting corner
+
+			# draw line
+			pendown()
+			goto(polygon[0])
+			penup()
+
+	# top right
+	elif startingIndex == 2:
+
+		if direction == 'clock':
+
+			# turn to face 1
+			setheading(towards(polygon[1]))
+
+			# offset from deviance
+			forward(deviance) # this will replace the starting corner
+
+			# draw line
+			pendown()
+			goto(polygon[3])
+			penup()
+
+		else:
+
+			# turn to face 3
+			setheading(towards(polygon[3]))
+
+			# offset from deviance
+			forward(deviance) # this will replace the starting corner
+
+			# draw line
+			pendown()
+			goto(polygon[1])
+			penup()
+
+	# top left
+	elif startingIndex == 3:
+
+		if direction == 'clock':
+
+			# turn to face 2
+			setheading(towards(polygon[2]))
+
+			# offset from deviance
+			forward(deviance) # this will replace the starting corner
+
+			# draw line
+			pendown()
+			goto(polygon[0])
+			penup()
+
+		else:
+
+			# turn to face 0
+			setheading(towards(polygon[0]))
+
+			# offset from deviance
+			forward(deviance) # this will replace the starting corner
+
+			# draw line
+			pendown()
+			goto(polygon[2])
+			penup()
+
+	# polygon is which shape to spiral
+	# startingCorner is which corner to start in
+	# direction is clockwise or counterclockwise
+	# deviance is how many pixels away from the current edge the end of the line will be
+	# 	deviance could also be done as:
+	# 	- a percentage of the opposing side
+	# 	- a percentage of the angle
+	# 	- a raw angle (e.g. 5 degrees)
+	# 	should we have options for all of these?
+
+	# function outline:
+	# pen up
+	# jump to starting corner
+	#
+	# definitely gonna be using towards(x, y)
+	# so how to get x, y?
+
 def main():
 	global allPoints_g
 	speed(0)
@@ -227,11 +393,10 @@ def main():
 
 	drawFunkyGrid()
 
-	# for row in allPoints_g:
-	# 	for point in row:
-	# 		print point
-	# 		goto(point)
-	# 		dot()
+	registerPolygons()
+
+	for poly in polygons_g:
+		spiral(poly, 'clock', 15)
 
 	exitonclick()
 
