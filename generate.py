@@ -3,7 +3,7 @@
 from turtle import *
 import random, time
 
-frameHeight_g	= 750
+frameHeight_g	= 850
 frameWidth_g	=  ((1 + sqrt(5)) / 2) * frameHeight_g # golden ratio
 vDivs_g			= 5
 hDivs_g			= 8
@@ -16,8 +16,8 @@ rightEdge_g		= 0
 bottomEdge_g	= 0
 allPoints_g		= []
 polygons_g		= [] # order of points is bottom left first, going counterclockwise
-skewMargin_g	= 60
-deviance_g		= 10
+skewMargin_g	= frameHeight_g / 12
+deviance_g		= 3
 
 def drawCanvas():
 	global canvas_g, leftEdge_g, topEdge_g, rightEdge_g, bottomEdge_g
