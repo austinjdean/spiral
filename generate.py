@@ -16,8 +16,11 @@ rightEdge_g		= 0
 bottomEdge_g	= 0
 allPoints_g		= []
 polygons_g		= [] # order of points is bottom left first, going counterclockwise
-skewMargin_g	= frameHeight_g / 12
-deviance_g		= 3
+skewMargin_g	= frameHeight_g / 14
+deviance_g		= 9
+width(3)
+speed(0)
+hideturtle()
 
 def drawCanvas():
 	global canvas_g, leftEdge_g, topEdge_g, rightEdge_g, bottomEdge_g
@@ -459,7 +462,6 @@ def spiral(polygon, startingIndex, direction, deviance, area):
 
 def main():
 	global allPoints_g
-	speed(0)
 	drawCanvas()
 
 	# For all positive integers NUM and DEN <= 10, where NUM > DEN, the combination 
@@ -480,8 +482,7 @@ def main():
 
 	allPoints_g = combinePoints(sortedSkewedInteriorPoints, sortedExteriorPoints)
 
-	hideturtle()
-	speed(0)
+	# speed(0)
 	setheading(90)
 
 	drawFunkyGrid()
